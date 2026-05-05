@@ -284,4 +284,6 @@ class ParentMode {
 }
 
 // Export singleton
-const ParentMode = new ParentMode();
+if (typeof window !== 'undefined') {
+    window.ParentMode = new ParentMode();
+}
