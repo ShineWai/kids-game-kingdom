@@ -3,12 +3,26 @@
  */
 
 class GameBase {
-    constructor(gameId, options = {}) {
+    /**
+     * @param {string} gameId - Game identifier
+     * @param {number|object} levelOrOptions - Level number (1-10) or options object
+     */
+    constructor(gameId, levelOrOptions = {}) {
         this.gameId = gameId;
+
+        // Handle both calling conventions: (gameId, level) and (gameId, options)
+        if (typeof levelOrOptions === 'number') {
+            this.level = levelOrOptions;
+            this.options = {};
+        } else {
+            this.level = levelOrOptions.level || 1;
+            this.options = levelOrOptions;
+        }
+
         this.canvas = null;
         this.renderer = null;
         this.physics = new Physics();
-        this.state = 'idle'; // idle, loading, playing, paused, gameOver
+        this.state = 'idle';
         this.score = 0;
         this.stars = 0;
         this.highScore = 0;
@@ -17,19 +31,20 @@ class GameBase {
         this.isPaused = false;
         this.animationId = null;
         this.lastFrameTime = 0;
+        this.gameCompleteCalled = false;
 
-        // Settings
-        this.width = options.width || Constants.GAME.DEFAULT_WIDTH;
-        this.height = options.height || Constants.GAME.DEFAULT_HEIGHT;
-        this.targetFPS = options.targetFPS || Constants.GAME.TARGET_FPS;
+        // Canvas settings
+        this.width = this.options.width || Constants.GAME.DEFAULT_WIDTH;
+        this.height = this.options.height || Constants.GAME.DEFAULT_HEIGHT;
+        this.targetFPS = this.options.targetFPS || Constants.GAME.TARGET_FPS;
         this.frameInterval = 1000 / this.targetFPS;
 
         // Callbacks
-        this.onScoreChange = options.onScoreChange || null;
-        this.onGameOver = options.onGameOver || null;
-        this.onStarEarned = options.onStarEarned || null;
-        this.onPause = options.onPause || null;
-        this.onResume = options.onResume || null;
+        this.onScoreChange = this.options.onScoreChange || null;
+        this.onGameOver = this.options.onGameOver || null;
+        this.onStarEarned = this.options.onStarEarned || null;
+        this.onPause = this.options.onPause || null;
+        this.onResume = this.options.onResume || null;
 
         // Load saved progress
         this.loadProgress();
@@ -113,9 +128,22 @@ class GameBase {
         this.stars = 0;
         this.elapsedTime = 0;
         this.isPaused = false;
+        this.gameCompleteCalled = false;
         this.lastFrameTime = performance.now();
 
         this.onStart?.();
+    }
+
+    /**
+     * Resize canvas to fit container
+     */
+    resizeCanvas(containerWidth, containerHeight) {
+        const size = Math.min(containerWidth, containerHeight, Constants.GAME.DEFAULT_WIDTH);
+        this.width = size;
+        this.height = size * 1.5;
+        if (this.renderer) {
+            this.renderer.resize(this.width, this.height);
+        }
     }
 
     /**
@@ -152,13 +180,13 @@ class GameBase {
      * End the game
      */
     end() {
+        if (this.gameCompleteCalled) return;
+        this.gameCompleteCalled = true;
+
         this.state = 'gameOver';
         this.gameOverTime = Date.now();
 
-        // Calculate final stars
         this.calculateStars();
-
-        // Save progress
         this.saveProgress();
 
         if (this.onGameOver) this.onGameOver(this.getResult());
@@ -182,11 +210,13 @@ class GameBase {
     getResult() {
         return {
             gameId: this.gameId,
+            level: this.level,
             score: this.score,
             stars: this.stars,
-            highScore: this.highScore,
+            highScore: Math.max(this.score, this.highScore),
             elapsedTime: this.elapsedTime,
-            isNewHighScore: this.score > this.highScore
+            isNewHighScore: this.score > this.highScore,
+            isWin: this.stars > 0
         };
     }
 

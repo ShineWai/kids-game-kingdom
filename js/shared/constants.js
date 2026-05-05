@@ -80,10 +80,16 @@ const Constants = {
 
     // Game types
     GAMES: {
-        FLAPPY_BIRD: 'flappyBird',
-        CATCH_GAME: 'catchGame',
-        PUZZLE: 'puzzle',
-        MEMORY: 'memory'
+        BUBBLE_POP: 'bubble-pop',
+        STAR_CATCHER: 'star-catcher',
+        SHAPE_SLICER: 'shape-slicer',
+        BLOCK_KINGDOM: 'block-kingdom',
+        MAGIC_PAINTER: 'magic-painter',
+        MUSIC_BAND: 'music-band',
+        RAINBOW_BRIDGE: 'rainbow-bridge',
+        BEAR_JOURNEY: 'bear-journey',
+        GARDEN_PARTY: 'garden-party',
+        ASTRONAUT: 'astronaut'
     },
 
     // Parent mode

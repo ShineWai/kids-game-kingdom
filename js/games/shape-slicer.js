@@ -1,526 +1,129 @@
 /**
- * Shape Slicer Game - Drag fragments to assemble target shapes
- * Theme: Rainbow Valley
+ * Shape Slicer - Drag pieces to complete the shape puzzle!
  */
-
 class ShapeSlicer extends GameBase {
-    constructor(level = 1) {
-        super('shape-slicer', level);
-
-        // Level configuration: pieceCount increases from 2 to 10
-        const pieceCount = Math.min(2 + (level - 1), 10);
-        this.targetPieceCount = pieceCount;
-        this.piecesPlaced = 0;
-
-        // Game state
-        this.shapes = ['circle', 'triangle', 'square'];
-        this.currentShapeIndex = (level - 1) % 3;
-        this.currentShape = this.shapes[this.currentShapeIndex];
-
-        this.fragments = [];
-        this.targetFragments = [];
-        this.draggingFragment = null;
-        this.dragOffset = { x: 0, y: 0 };
-        this.snapDistance = 40;
-
-        // Rainbow valley theme colors
-        this.rainbowColors = ['#EF5350', '#FFB74D', '#FFEB3B', '#66BB6A', '#4FC3F7', '#7E57C2', '#EC407A'];
-
-        // Shape colors
-        this.shapeColors = {
-            circle: '#FF7043',
-            triangle: '#42A5F5',
-            square: '#66BB6A'
-        };
-
-        this.gameCompleteCalled = false;
-
-        // Input handling
-        this.handleInput = this.handleInput.bind(this);
+    constructor(gameId, levelOrOptions) {
+        super(gameId, levelOrOptions);
+        const configs = [
+            { shape: 'circle',   pieces: 3, time: 60 },
+            { shape: 'square',   pieces: 3, time: 55 },
+            { shape: 'triangle', pieces: 4, time: 55 },
+            { shape: 'star',     pieces: 4, time: 50 },
+            { shape: 'heart',    pieces: 4, time: 50 },
+            { shape: 'diamond',  pieces: 5, time: 45 },
+            { shape: 'hexagon',  pieces: 5, time: 45 },
+            { shape: 'star',     pieces: 6, time: 40 },
+            { shape: 'heart',    pieces: 6, time: 40 },
+            { shape: 'hexagon',  pieces: 7, time: 35 }
+        ];
+        const cfg = configs[Math.min(this.level - 1, 9)];
+        this.shapeType = cfg.shape;
+        this.pieceCount = cfg.pieces;
+        this.timeLimit = cfg.time;
+        this.remainingTime = cfg.time;
+        this.pieces = [];
+        this.dragging = null;
+        this.placedCount = 0;
+        this.targetCX = this.width / 2;
+        this.targetCY = this.height / 2 - 20;
     }
 
-    /**
-     * Initialize game elements
-     */
     initElements() {
-        this.fragments = [];
-        this.targetFragments = [];
-        this.piecesPlaced = 0;
-        this.gameCompleteCalled = false;
-        this.currentShape = this.shapes[(this.level - 1) % 3];
-        this.targetPieceCount = Math.min(2 + (this.level - 1), 10);
-
-        // Create target shape outline
-        this.createTargetShape();
-
-        // Create draggable fragments
-        this.createFragments();
-    }
-
-    /**
-     * Create target shape outline
-     */
-    createTargetShape() {
-        const centerX = this.width / 2;
-        const centerY = this.height / 2 - 30;
-        const size = Math.min(this.width, this.height) * 0.25;
-
-        this.targetFragments = [];
-
-        // Calculate shape points
-        if (this.currentShape === 'circle') {
-            const radius = size;
-            for (let i = 0; i < this.targetPieceCount; i++) {
-                const angle1 = (Math.PI * 2 / this.targetPieceCount) * i;
-                const angle2 = (Math.PI * 2 / this.targetPieceCount) * (i + 1);
-                const midAngle = (angle1 + angle2) / 2;
-
-                this.targetFragments.push({
-                    type: 'arc',
-                    cx: centerX,
-                    cy: centerY,
-                    radius: radius,
-                    angle1: angle1,
-                    angle2: angle2,
-                    color: this.shapeColors.circle,
-                    placed: false
-                });
-            }
-        } else if (this.currentShape === 'triangle') {
-            for (let i = 0; i < this.targetPieceCount; i++) {
-                const angle = (Math.PI * 2 / 3) * i - Math.PI / 2;
-                const nextAngle = (Math.PI * 2 / 3) * (i + 1) - Math.PI / 2;
-
-                this.targetFragments.push({
-                    type: 'polygon',
-                    points: [
-                        { x: centerX, y: centerY },
-                        { x: centerX + Math.cos(angle) * size, y: centerY + Math.sin(angle) * size },
-                        { x: centerX + Math.cos(nextAngle) * size, y: centerY + Math.sin(nextAngle) * size }
-                    ],
-                    color: this.shapeColors.triangle,
-                    placed: false
-                });
-            }
-        } else if (this.currentShape === 'square') {
-            const halfSize = size * 0.7;
-            const quarterSize = halfSize / 2;
-
-            for (let i = 0; i < this.targetPieceCount; i++) {
-                const col = i % 2;
-                const row = Math.floor(i / 2);
-                const w = halfSize;
-                const h = halfSize;
-
-                this.targetFragments.push({
-                    type: 'rect',
-                    x: centerX - halfSize + col * w,
-                    y: centerY - halfSize + row * h,
-                    width: w,
-                    height: h,
-                    color: this.shapeColors.square,
-                    placed: false
-                });
-            }
+        this.pieces = []; this.dragging = null; this.placedCount = 0; this.remainingTime = this.timeLimit;
+        const colors = ['#EF5350','#FFB74D','#4FC3F7','#66BB6A','#AB47BC','#FF7043','#26C6DA'];
+        for (let i = 0; i < this.pieceCount; i++) {
+            const aStart = (i / this.pieceCount) * Math.PI * 2;
+            const aEnd = ((i + 1) / this.pieceCount) * Math.PI * 2;
+            const sx = Utils.random(50, this.width - 50);
+            const sy = i < this.pieceCount / 2 ? Utils.random(30, 120) : Utils.random(this.height - 150, this.height - 30);
+            this.pieces.push({ x: sx, y: sy, origX: sx, origY: sy, targetX: this.targetCX, targetY: this.targetCY, angleStart: aStart, angleEnd: aEnd, idx: i, placed: false, color: colors[i % colors.length] });
         }
     }
 
-    /**
-     * Create draggable fragments
-     */
-    createFragments() {
-        const startY = this.height - 150;
-
-        for (let i = 0; i < this.targetPieceCount; i++) {
-            // Shuffle position in bottom area
-            const fragment = {
-                id: i,
-                x: 100 + (i % 4) * 120 + Utils.random(-20, 20),
-                y: startY + Math.floor(i / 4) * 100 + Utils.random(-10, 10),
-                width: 80,
-                height: 60,
-                color: this.rainbowColors[i % this.rainbowColors.length],
-                rotation: Utils.random(-0.3, 0.3),
-                placed: false,
-                scale: 1,
-                targetIndex: i
-            };
-            this.fragments.push(fragment);
-        }
-
-        // Shuffle fragments for challenge
-        this.fragments.sort(() => Math.random() - 0.5);
-    }
-
-    /**
-     * Update game state
-     */
     update(deltaTime) {
-        if (this.state !== 'playing') return;
-
-        // Check win condition
-        if (this.piecesPlaced >= this.targetPieceCount) {
-            this.win();
-        }
+        if (this.state !== 'playing' || this.gameCompleteCalled) return;
+        this.remainingTime -= deltaTime;
+        if (this.remainingTime <= 0) { this.remainingTime = 0; this._endGame(); }
     }
 
-    /**
-     * Handle win condition
-     */
-    win() {
-        if (this.gameCompleteCalled) return;
-        this.gameCompleteCalled = true;
-
-        this.addScore(this.targetPieceCount * 10);
-
-        setTimeout(() => {
-            this.end();
-            if (this.onGameOver) {
-                this.onGameOver(this.getResult());
-            }
-        }, 500);
+    _endGame() {
+        if (this.placedCount >= this.pieceCount) {
+            const pct = this.remainingTime / this.timeLimit;
+            this.stars = pct > 0.5 ? 3 : pct > 0.25 ? 2 : 1;
+            this.addScore(this.placedCount * 100 + Math.floor(this.remainingTime) * 2);
+            Audio.playSuccessMelody(); Audio.vibrateSuccess();
+        } else if (this.placedCount >= this.pieceCount * 0.5) {
+            this.stars = 1; this.addScore(this.placedCount * 50);
+        } else { this.stars = 0; Audio.playGameOver(); }
+        setTimeout(() => this.end(), 600);
     }
+    calculateStars() {}
 
-    /**
-     * Calculate stars based on placement accuracy
-     */
-    calculateStars() {
-        // All pieces placed successfully
-        if (this.piecesPlaced >= this.targetPieceCount) {
-            if (this.level >= 8) {
-                this.stars = 3;
-            } else if (this.level >= 5) {
-                this.stars = 2;
-            } else {
-                this.stars = 1;
-            }
-        }
-    }
-
-    /**
-     * Handle input (touch/mouse)
-     */
-    handleInput(x, y, action = 'start') {
-        if (this.state !== 'playing') return;
-
-        if (action === 'start') {
-            // Find clicked fragment
-            for (let i = this.fragments.length - 1; i >= 0; i--) {
-                const frag = this.fragments[i];
-                if (!frag.placed) {
-                    const dist = Utils.distance(x, y, frag.x, frag.y);
-                    if (dist < 50) {
-                        this.draggingFragment = frag;
-                        this.dragOffset.x = frag.x - x;
-                        this.dragOffset.y = frag.y - y;
-                        frag.scale = 1.1;
-                        Audio.playSound(Constants.AUDIO.CLICK);
-                        break;
-                    }
-                }
-            }
-        } else if (action === 'move' && this.draggingFragment) {
-            this.draggingFragment.x = x + this.dragOffset.x;
-            this.draggingFragment.y = y + this.dragOffset.y;
-        } else if (action === 'end' && this.draggingFragment) {
-            this.checkSnap();
-        }
-    }
-
-    /**
-     * Check if fragment should snap to target
-     */
-    checkSnap() {
-        const frag = this.draggingFragment;
-
-        // Find nearest target position
-        let nearestTarget = null;
-        let nearestDist = this.snapDistance;
-
-        this.targetFragments.forEach((target, index) => {
-            if (!target.placed) {
-                const targetX = this.getTargetPosition(target).x;
-                const targetY = this.getTargetPosition(target).y;
-                const dist = Utils.distance(frag.x, frag.y, targetX, targetY);
-
-                if (dist < nearestDist) {
-                    nearestDist = dist;
-                    nearestTarget = index;
-                }
-            }
-        });
-
-        if (nearestTarget !== null) {
-            // Snap to target
-            const target = this.targetFragments[nearestTarget];
-            const pos = this.getTargetPosition(target);
-
-            frag.x = pos.x;
-            frag.y = pos.y;
-            frag.placed = true;
-            frag.scale = 1;
-            target.placed = true;
-            this.piecesPlaced++;
-
-            Audio.playSound(Constants.AUDIO.SUCCESS);
-        } else {
-            // Return to original scale
-            frag.scale = 1;
-        }
-
-        this.draggingFragment = null;
-    }
-
-    /**
-     * Get target position for a fragment
-     */
-    getTargetPosition(target) {
-        if (target.type === 'arc') {
-            const midAngle = (target.angle1 + target.angle2) / 2;
-            return {
-                x: target.cx + Math.cos(midAngle) * target.radius * 0.6,
-                y: target.cy + Math.sin(midAngle) * target.radius * 0.6
-            };
-        } else if (target.type === 'polygon') {
-            const cx = target.points.reduce((sum, p) => sum + p.x, 0) / 3;
-            const cy = target.points.reduce((sum, p) => sum + p.y, 0) / 3;
-            return { x: cx, y: cy };
-        } else if (target.type === 'rect') {
-            return {
-                x: target.x + target.width / 2,
-                y: target.y + target.height / 2
-            };
-        }
-        return { x: 0, y: 0 };
-    }
-
-    /**
-     * Render game
-     */
     render() {
-        // Draw rainbow valley background
-        this.renderer.drawGradient(0, 0, this.width, this.height, '#E8F5E9', '#C8E6C9');
+        this.renderer.clearWithColor('#F3E5F5');
+        const ctx = this.renderer.ctx, cx = this.targetCX, cy = this.targetCY, r = 60;
+        ctx.strokeStyle = 'rgba(120,100,140,0.3)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+        this._drawShapePath(cx, cy, r); ctx.stroke(); ctx.setLineDash([]);
 
-        // Draw rainbow mountains in background
-        this.drawMountains();
-
-        // Draw target shape outline (ghost)
-        this.drawTargetShape();
-
-        // Draw placed fragments
-        this.fragments.forEach(frag => {
-            if (frag.placed) {
-                this.drawFragment(frag);
-            }
+        this.pieces.forEach(p => {
+            this.renderer.save();
+            if (p.placed) { ctx.globalAlpha = 0.7; ctx.shadowColor = 'rgba(102,187,106,0.6)'; ctx.shadowBlur = 10; }
+            if (p === this.dragging) { ctx.shadowColor = 'rgba(0,0,0,0.3)'; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3; }
+            ctx.fillStyle = p.color; ctx.beginPath();
+            const size = p.placed ? r : 22;
+            ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, size, p.angleStart, p.angleEnd); ctx.closePath(); ctx.fill();
+            ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            const midA = (p.angleStart + p.angleEnd) / 2;
+            ctx.fillText(p.idx + 1, p.x + Math.cos(midA) * 11, p.y + Math.sin(midA) * 11);
+            this.renderer.restore();
         });
 
-        // Draw unplaced fragments
-        this.fragments.forEach(frag => {
-            if (!frag.placed && frag !== this.draggingFragment) {
-                this.drawFragment(frag);
-            }
-        });
+        ctx.strokeStyle = 'rgba(102,187,106,0.4)'; ctx.lineWidth = 3;
+        this._drawShapePath(cx, cy, r); ctx.stroke();
 
-        // Draw dragging fragment on top
-        if (this.draggingFragment) {
-            this.drawFragment(this.draggingFragment);
-        }
-
-        // Draw HUD
-        this.renderHUD();
+        const tbw = this.width - 40, tby = 14;
+        this.renderer.drawRect(20, tby, tbw, 10, 'rgba(0,0,0,0.1)', 5);
+        this.renderer.drawRect(20, tby, tbw * (this.remainingTime / this.timeLimit), 10, this.remainingTime > 10 ? '#AB47BC' : '#EF5350', 5);
+        this.renderer.drawText('拼好: ' + this.placedCount + '/' + this.pieceCount, 50, 36, { font: 'bold 14px sans-serif', color: '#4A148C', align: 'left' });
+        this.renderer.drawText(Math.ceil(this.remainingTime) + 's', this.width - 50, 36, { font: 'bold 14px sans-serif', color: '#4A148C', align: 'right' });
+        const names = { circle: '圓形', square: '正方形', triangle: '三角形', star: '星形', heart: '愛心', diamond: '菱形', hexagon: '六邊形' };
+        this.renderer.drawText(names[this.shapeType], this.width / 2, 36, { font: 'bold 16px sans-serif', color: '#6A1B9A' });
     }
 
-    /**
-     * Draw rainbow mountains in background
-     */
-    drawMountains() {
-        const colors = ['#EF5350', '#FFB74D', '#FFEB3B', '#66BB6A', '#4FC3F7'];
-        const baseY = this.height;
-
-        colors.forEach((color, i) => {
-            const height = 80 + i * 20;
-            const offset = i * 50;
-
-            this.renderer.ctx.beginPath();
-            this.renderer.ctx.moveTo(-50 + offset, baseY);
-            this.renderer.ctx.lineTo(150 + offset, baseY - height);
-            this.renderer.ctx.lineTo(350 + offset, baseY);
-            this.renderer.ctx.closePath();
-            this.renderer.ctx.fillStyle = color + '40';
-            this.renderer.ctx.fill();
-        });
-    }
-
-    /**
-     * Draw target shape outline
-     */
-    drawTargetShape() {
-        const centerX = this.width / 2;
-        const centerY = this.height / 2 - 30;
-        const size = Math.min(this.width, this.height) * 0.25;
-
-        this.targetFragments.forEach((target, index) => {
-            if (!target.placed) {
-                this.renderer.ctx.globalAlpha = 0.3;
-                this.drawFragmentShape(target, index);
-                this.renderer.ctx.globalAlpha = 1;
-            }
-        });
-    }
-
-    /**
-     * Draw a fragment
-     */
-    drawFragment(frag) {
-        this.renderer.save();
-        this.renderer.ctx.translate(frag.x, frag.y);
-        this.renderer.ctx.rotate(frag.rotation);
-        this.renderer.ctx.scale(frag.scale, frag.scale);
-
-        const target = this.targetFragments[frag.targetIndex];
-
-        // Draw fragment shape
-        this.drawFragmentShape(target, frag.id, frag.color);
-
-        this.renderer.restore();
-    }
-
-    /**
-     * Draw fragment shape
-     */
-    drawFragmentShape(target, index, color = null) {
-        const fragColor = color || target.color;
-
-        if (target.type === 'arc') {
-            const midAngle = (target.angle1 + target.angle2) / 2;
-            const x = target.cx + Math.cos(midAngle) * target.radius * 0.6;
-            const y = target.cy + Math.sin(midAngle) * target.radius * 0.6;
-
-            this.renderer.ctx.beginPath();
-            this.renderer.ctx.moveTo(target.cx, target.cy);
-            this.renderer.ctx.arc(target.cx, target.cy, target.radius, target.angle1, target.angle2);
-            this.renderer.ctx.closePath();
-            this.renderer.ctx.fillStyle = fragColor + '80';
-            this.renderer.ctx.fill();
-            this.renderer.ctx.strokeStyle = fragColor;
-            this.renderer.ctx.lineWidth = 3;
-            this.renderer.ctx.stroke();
-
-        } else if (target.type === 'polygon') {
-            this.renderer.ctx.beginPath();
-            this.renderer.ctx.moveTo(target.points[0].x, target.points[0].y);
-            target.points.forEach(p => this.renderer.ctx.lineTo(p.x, p.y));
-            this.renderer.ctx.closePath();
-            this.renderer.ctx.fillStyle = fragColor + '80';
-            this.renderer.ctx.fill();
-            this.renderer.ctx.strokeStyle = fragColor;
-            this.renderer.ctx.lineWidth = 3;
-            this.renderer.ctx.stroke();
-
-        } else if (target.type === 'rect') {
-            this.renderer.drawRect(target.x, target.y, target.width, target.height, fragColor + '80', 3);
+    _drawShapePath(x, y, r) {
+        const ctx = this.renderer.ctx;
+        ctx.beginPath();
+        switch (this.shapeType) {
+            case 'circle': ctx.arc(x, y, r, 0, Math.PI * 2); break;
+            case 'square': ctx.rect(x - r, y - r, r * 2, r * 2); break;
+            case 'triangle': ctx.moveTo(x, y - r); ctx.lineTo(x + r * 0.87, y + r * 0.5); ctx.lineTo(x - r * 0.87, y + r * 0.5); ctx.closePath(); break;
+            case 'diamond': ctx.moveTo(x, y - r); ctx.lineTo(x + r * 0.7, y); ctx.lineTo(x, y + r); ctx.lineTo(x - r * 0.7, y); ctx.closePath(); break;
+            case 'hexagon': for (let i = 0; i < 6; i++) { const a = (Math.PI/3)*i - Math.PI/2; i === 0 ? ctx.moveTo(x+r*Math.cos(a), y+r*Math.sin(a)) : ctx.lineTo(x+r*Math.cos(a), y+r*Math.sin(a)); } ctx.closePath(); break;
+            case 'star': for (let i = 0; i < 10; i++) { const a = (Math.PI/5)*i - Math.PI/2; const rr = i%2===0 ? r : r*0.45; i === 0 ? ctx.moveTo(x+rr*Math.cos(a), y+rr*Math.sin(a)) : ctx.lineTo(x+rr*Math.cos(a), y+rr*Math.sin(a)); } ctx.closePath(); break;
+            case 'heart': ctx.moveTo(x, y + r*0.6); ctx.bezierCurveTo(x - r, y + r*0.1, x - r, y - r*0.7, x, y - r*0.2); ctx.bezierCurveTo(x + r, y - r*0.7, x + r, y + r*0.1, x, y + r*0.6); break;
         }
     }
 
-    /**
-     * Render HUD
-     */
-    renderHUD() {
-        // Shape name
-        const shapeNames = { circle: '圓形', triangle: '三角形', square: '正方形' };
-        this.renderer.drawText(shapeNames[this.currentShape], this.width / 2, 30, {
-            font: 'bold 22px -apple-system, BlinkMacSystemFont, sans-serif',
-            color: '#37474F'
-        });
+    _getXY(e) { const r = this.canvas.getBoundingClientRect(); return { x: (e.touches ? e.touches[0].clientX : e.clientX) - r.left, y: (e.touches ? e.touches[0].clientY : e.clientY) - r.top }; }
+    _findPiece(x, y) { for (let i = this.pieces.length - 1; i >= 0; i--) { const p = this.pieces[i]; if (!p.placed && Utils.distance(x, y, p.x, p.y) < 28) return p; } return null; }
+    _onDown = (e) => { const { x, y } = this._getXY(e); const p = this._findPiece(x, y); if (p) { this.dragging = p; this.dragOffX = p.x - x; this.dragOffY = p.y - y; } };
+    _onMove = (e) => { if (!this.dragging) return; const { x, y } = this._getXY(e); this.dragging.x = x + this.dragOffX; this.dragging.y = y + this.dragOffY; };
+    _onUp = () => { if (!this.dragging) return; const p = this.dragging; const dist = Utils.distance(p.x, p.y, p.targetX, p.targetY); if (dist < 35) { p.x = p.targetX; p.y = p.targetY; p.placed = true; this.placedCount++; this.addScore(100); Audio.playStar(); if (this.placedCount >= this.pieceCount) this._endGame(); } else { p.x = p.origX; p.y = p.origY; Audio.playError(); } this.dragging = null; };
+    _onTDown = (e) => { e.preventDefault(); this._onDown(e); };
+    _onTMove = (e) => { e.preventDefault(); this._onMove(e); };
+    _onTUp = () => { this._onUp(); };
 
-        // Progress
-        this.renderer.drawText(`${this.piecesPlaced} / ${this.targetPieceCount}`, this.width / 2, 55, {
-            font: '18px -apple-system, BlinkMacSystemFont, sans-serif',
-            color: '#546E7A'
-        });
-
-        // Instructions
-        this.renderer.drawText('拖曳碎片到目標位置', this.width / 2, this.height - 20, {
-            font: '14px -apple-system, BlinkMacSystemFont, sans-serif',
-            color: '#78909C'
-        });
-    }
-
-    /**
-     * Set up input handlers
-     */
-    setupInput() {
-        const canvas = this.canvas;
-
-        // Mouse events
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            this.handleInput(e.clientX - rect.left, e.clientY - rect.top, 'start');
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            this.handleInput(e.clientX - rect.left, e.clientY - rect.top, 'move');
-        });
-
-        canvas.addEventListener('mouseup', (e) => {
-            this.handleInput(0, 0, 'end');
-        });
-
-        // Touch events
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            this.handleInput(touch.clientX - rect.left, touch.clientY - rect.top, 'start');
-        }, { passive: false });
-
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            this.handleInput(touch.clientX - rect.left, touch.clientY - rect.top, 'move');
-        }, { passive: false });
-
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            this.handleInput(0, 0, 'end');
-        }, { passive: false });
-    }
-
-    /**
-     * Start the game
-     */
     start() {
         super.start();
-        this.setupInput();
+        this.canvas.addEventListener('mousedown', this._onDown); this.canvas.addEventListener('mousemove', this._onMove); this.canvas.addEventListener('mouseup', this._onUp);
+        this.canvas.addEventListener('touchstart', this._onTDown, { passive: false }); this.canvas.addEventListener('touchmove', this._onTMove, { passive: false }); this.canvas.addEventListener('touchend', this._onTUp);
     }
 
-    /**
-     * Clean up
-     */
     destroy() {
-        if (this.canvas) {
-            this.canvas.removeEventListener('mousedown', this.handleInput);
-            this.canvas.removeEventListener('mousemove', this.handleInput);
-            this.canvas.removeEventListener('mouseup', this.handleInput);
-            this.canvas.removeEventListener('touchstart', this.handleInput);
-            this.canvas.removeEventListener('touchmove', this.handleInput);
-            this.canvas.removeEventListener('touchend', this.handleInput);
-        }
+        if (this.canvas) { const c = this.canvas; c.removeEventListener('mousedown', this._onDown); c.removeEventListener('mousemove', this._onMove); c.removeEventListener('mouseup', this._onUp); c.removeEventListener('touchstart', this._onTDown); c.removeEventListener('touchmove', this._onTMove); c.removeEventListener('touchend', this._onTUp); }
         super.destroy();
     }
 }
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ShapeSlicer;
-}
-
-// Register globally for browser use
-if (typeof window !== 'undefined') {
-    window.ShapeSlicer = ShapeSlicer;
-    if (window.GameRegistry) {
-        GameRegistry.register('shape-slicer', ShapeSlicer);
-    }
-}
+if (typeof window !== 'undefined') { window.ShapeSlicer = ShapeSlicer; if (window.GameRegistry) GameRegistry.register('shape-slicer', ShapeSlicer); }

@@ -1,5 +1,5 @@
 /**
- * Game CSS - Game container, Canvas, HUD, controls
+ * Game CSS - Canvas, HUD, controls, overlays (Tech Theme)
  */
 
 /* Game Container */
@@ -7,30 +7,31 @@
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    background: linear-gradient(180deg, var(--color-sky) 0%, var(--color-sky-light) 100%);
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-deep);
+    position: relative;
 }
 
 .game-canvas-wrapper {
-    flex: 1;
     position: relative;
     overflow: hidden;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.15), 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .game-canvas {
     display: block;
-    width: 100%;
-    height: 100%;
     touch-action: none;
 }
 
-/* HUD (Heads-Up Display) */
+/* HUD */
 .game-hud {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -39,17 +40,18 @@
 }
 
 .hud-item {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(10, 14, 39, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-md);
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    box-shadow: var(--shadow-sm);
 }
 
 .hud-icon {
-    font-size: var(--font-lg);
+    font-size: 18px;
 }
 
 .hud-value {
@@ -59,7 +61,8 @@
 }
 
 .hud-score .hud-value {
-    color: var(--color-primary-dark);
+    color: var(--color-primary);
+    text-shadow: 0 0 8px var(--color-primary-glow);
 }
 
 .hud-time .hud-value {
@@ -72,67 +75,22 @@
     top: var(--spacing-md);
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--color-secondary), var(--color-orange));
-    color: var(--text-light);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: #fff;
     padding: var(--spacing-xs) var(--spacing-lg);
     border-radius: var(--radius-lg);
     font-size: var(--font-sm);
     font-weight: 700;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 0 12px var(--color-primary-glow);
+    z-index: 100;
 }
 
-/* Touch Controls */
-.touch-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    display: flex;
-    pointer-events: none;
-}
-
-.touch-control {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-    touch-action: none;
-}
-
-.touch-control-btn {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius-round);
-    background: rgba(255, 255, 255, 0.8);
-    border: 3px solid rgba(255, 255, 255, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.1s ease, background 0.1s ease;
-}
-
-.touch-control-btn:active {
-    transform: scale(0.9);
-    background: rgba(255, 255, 255, 1);
-}
-
-.touch-control-left .touch-control-btn {
-    margin-left: var(--spacing-lg);
-}
-
-.touch-control-right .touch-control-btn {
-    margin-right: var(--spacing-lg);
-}
-
-/* Game Overlay (Pause, Game Over, etc.) */
+/* Game Overlay */
 .game-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(10, 14, 39, 0.85);
+    backdrop-filter: blur(6px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -150,15 +108,15 @@
 
 .overlay-title {
     font-size: var(--font-xxl);
-    font-weight: 700;
-    color: var(--text-light);
+    font-weight: 800;
+    color: #fff;
     margin-bottom: var(--spacing-md);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 20px var(--color-primary-glow);
 }
 
 .overlay-subtitle {
     font-size: var(--font-lg);
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.8);
     margin-bottom: var(--spacing-lg);
 }
 
@@ -169,50 +127,31 @@
     gap: var(--spacing-md);
 }
 
-/* Pause Button */
-.pause-btn {
-    position: absolute;
-    top: var(--spacing-md);
-    right: var(--spacing-md);
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-round);
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    color: var(--text-light);
-    font-size: var(--font-lg);
-    cursor: pointer;
-    z-index: 150;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
-}
-
-.pause-btn:hover {
-    background: rgba(0, 0, 0, 0.5);
-}
-
 /* Result Panel */
 .result-panel {
-    background: var(--bg-card);
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
     text-align: center;
     max-width: 300px;
     width: 90%;
+    box-shadow: var(--shadow-lg);
 }
 
 .result-stars {
     font-size: 48px;
     margin-bottom: var(--spacing-md);
+    display: flex;
+    gap: 4px;
+    justify-content: center;
 }
 
 .result-score {
     font-size: var(--font-xl);
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .result-message {
@@ -221,20 +160,60 @@
     margin-bottom: var(--spacing-lg);
 }
 
+/* New High Score */
+.new-high-score {
+    color: var(--star-gold);
+    font-size: var(--font-md);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    animation: pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+/* Pause Button */
+.pause-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-round);
+    background: rgba(10, 14, 39, 0.7);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+}
+.pause-btn:hover {
+    background: rgba(10, 14, 39, 0.9);
+}
+
 /* Progress Indicator */
 .game-progress {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.3);
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .game-progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, var(--color-success), var(--color-accent));
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
     transition: width 0.3s ease;
+    box-shadow: 0 0 6px var(--color-primary-glow);
 }
 
 /* Combo Display */
@@ -243,10 +222,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: var(--font-xxl);
+    font-size: 40px;
     font-weight: 900;
     color: var(--color-secondary);
-    text-shadow: 2px 2px 0 var(--color-primary-dark);
+    text-shadow: 0 0 16px var(--color-secondary-glow), 2px 2px 0 rgba(0,0,0,0.5);
     opacity: 0;
     transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
@@ -255,11 +234,47 @@
 
 .combo-display.active {
     opacity: 1;
-    animation: comboPulse 0.5s ease;
+    animation: comboPulse 0.4s ease;
 }
 
 @keyframes comboPulse {
     0% { transform: translate(-50%, -50%) scale(0.5); }
     50% { transform: translate(-50%, -50%) scale(1.2); }
     100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Touch Controls (mobile) */
+.touch-controls {
+    position: absolute;
+    bottom: var(--spacing-md);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 var(--spacing-lg);
+    pointer-events: none;
+    z-index: 100;
+}
+
+.touch-control-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-round);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    pointer-events: auto;
+    touch-action: none;
+    backdrop-filter: blur(4px);
+    transition: all 0.15s ease;
+}
+
+.touch-control-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 16px var(--color-primary-glow);
+    transform: scale(0.92);
 }

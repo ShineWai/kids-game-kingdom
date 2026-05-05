@@ -18,11 +18,12 @@ class Renderer {
     resize(width, height) {
         this.width = width;
         this.height = height;
+        this.scale = window.devicePixelRatio || 1;
         this.canvas.width = width * this.scale;
         this.canvas.height = height * this.scale;
         this.canvas.style.width = width + 'px';
         this.canvas.style.height = height + 'px';
-        this.ctx.scale(this.scale, this.scale);
+        this.ctx.setTransform(this.scale, 0, 0, this.scale, 0, 0);
     }
 
     /**
@@ -55,7 +56,7 @@ class Renderer {
     /**
      * Draw outlined rectangle
      */
-    drawRectOutline(x, y, width, height, color, lineWidth = 2) {
+    drawRectOutline(x, y, width, height, color, lineWidth = 2, radius = 0) {
         this.ctx.strokeStyle = color;
         this.ctx.lineWidth = lineWidth;
         if (radius > 0) {
