@@ -30,12 +30,12 @@ const Constants = {
         BUTTON_CLICK: 'buttonClick'
     },
 
-    // Storage keys
+    // Storage keys (Storage class adds 'kidsgame_' prefix automatically)
     STORAGE: {
-        PROGRESS: 'kidsgame_progress',
-        SETTINGS: 'kidsgame_settings',
-        STARS: 'kidsgame_stars',
-        PARENT_PIN: 'kidsgame_parent_pin'
+        PROGRESS: 'progress',
+        SETTINGS: 'settings',
+        STARS: 'stars',
+        PARENT_PIN: 'parent_pin'
     },
 
     // Game difficulty levels

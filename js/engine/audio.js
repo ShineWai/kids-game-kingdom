@@ -183,6 +183,13 @@ class AudioManager {
     }
 
     /**
+     * Play error sound
+     */
+    async playError() {
+        await this.playSound(Constants.AUDIO.ERROR);
+    }
+
+    /**
      * Play button click sound
      */
     async playButtonClick() {

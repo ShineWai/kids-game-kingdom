@@ -8,26 +8,31 @@ class App {
         this.currentGame = null;
         this.isLoading = false;
         this.container = document.getElementById('app');
+        if (!this.container) {
+            console.error('[App] Container element #app not found');
+        }
     }
 
     /**
      * Initialize the app
      */
     init() {
-        // Initialize storage
-        this.checkFirstLaunch();
+        try {
+            // Setup global listeners first (safe to run regardless)
+            this.setupAudio();
+            this.registerServiceWorker();
+            this.setupEventListeners();
 
-        // Initialize audio
-        this.setupAudio();
-
-        // Register service worker
-        this.registerServiceWorker();
-
-        // Setup event listeners
-        this.setupEventListeners();
-
-        // Render home view
-        this.renderHome();
+            // Show welcome or home
+            if (Storage.isFirstLaunch()) {
+                this.showWelcome();
+            } else {
+                this.renderHome();
+            }
+        } catch (error) {
+            console.error('[App] Init error:', error);
+            this.showFatalError(error);
+        }
     }
 
     /**
@@ -35,9 +40,7 @@ class App {
      */
     checkFirstLaunch() {
         if (Storage.isFirstLaunch()) {
-            // Show welcome screen on first launch
             this.showWelcome();
-            Storage.markLaunched();
         }
     }
 
@@ -104,9 +107,13 @@ class App {
     }
 
     /**
-     * Show welcome screen
+     * Show welcome screen (first launch only)
      */
     showWelcome() {
+        if (!this.container) return;
+
+        this.clearContainer();
+
         const welcomeScreen = document.createElement('div');
         welcomeScreen.className = 'welcome-screen';
         welcomeScreen.innerHTML = `
@@ -123,8 +130,10 @@ class App {
 
         document.getElementById('start-btn').addEventListener('click', () => {
             welcomeScreen.classList.add('fadeOut');
+            Storage.markLaunched();
             setTimeout(() => {
                 welcomeScreen.remove();
+                this.renderHome();
             }, 500);
         });
     }
@@ -133,27 +142,36 @@ class App {
      * Render home view
      */
     renderHome() {
-        this.currentView = 'home';
-        this.clearContainer();
+        try {
+            if (!this.container) return;
 
-        const homeView = document.createElement('div');
-        homeView.className = 'home-view';
-        homeView.innerHTML = `
-            <header class="header">
-                <h1 class="header-title">小小遊戲王國</h1>
-                <button class="btn btn-icon" id="parent-btn" title="家長專區">🔒</button>
-            </header>
-            <div class="stars-bar">
-                <span class="stars-icon">⭐</span>
-                <span class="stars-count" id="total-stars">${Storage.getTotalStars()}</span>
-            </div>
-            <main class="game-grid" id="game-grid">
-                ${this.renderGameCards()}
-            </main>
-        `;
+            this.currentView = 'home';
+            this.clearContainer();
 
-        this.container.appendChild(homeView);
-        this.setupHomeListeners();
+            const totalStars = Storage.getTotalStars();
+
+            const homeView = document.createElement('div');
+            homeView.className = 'home-view';
+            homeView.innerHTML = `
+                <header class="header">
+                    <h1 class="header-title">小小遊戲王國</h1>
+                    <button class="btn btn-icon" id="parent-btn" title="家長專區">🔒</button>
+                </header>
+                <div class="stars-bar">
+                    <span class="stars-icon">⭐</span>
+                    <span class="stars-count" id="total-stars">${totalStars}</span>
+                </div>
+                <main class="game-grid" id="game-grid">
+                    ${this.renderGameCards()}
+                </main>
+            `;
+
+            this.container.appendChild(homeView);
+            this.setupHomeListeners();
+        } catch (error) {
+            console.error('[App] renderHome error:', error);
+            this.showFatalError(error);
+        }
     }
 
     /**
@@ -374,6 +392,34 @@ class App {
     }
 
     /**
+     * Show fatal error (app initialization failure)
+     */
+    showFatalError(error) {
+        if (!this.container) {
+            document.body.innerHTML = '<div style="padding:40px;text-align:center;font-size:18px;color:#EF5350;">'
+                + '<h2>載入失敗</h2>'
+                + '<p>系統發生錯誤，請重新整理頁面。</p>'
+                + '<p style="font-size:14px;color:#999;">' + (error.message || 'Unknown error') + '</p>'
+                + '</div>';
+            return;
+        }
+
+        this.clearContainer();
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'fatal-error';
+        errorDiv.style.cssText = 'padding:60px 20px;text-align:center;';
+        errorDiv.innerHTML = `
+            <h2 style="color:#EF5350;">載入失敗</h2>
+            <p>系統發生錯誤，請嘗試重新整理頁面。</p>
+            <p style="font-size:12px;color:#999;margin-top:10px;">${error.message || 'Unknown error'}</p>
+            <button class="btn btn-primary" onclick="location.reload()" style="margin-top:20px;">
+                重新整理
+            </button>
+        `;
+        this.container.appendChild(errorDiv);
+    }
+
+    /**
      * Show error message
      */
     showError(message) {
@@ -405,7 +451,9 @@ class App {
      * Clear container
      */
     clearContainer() {
-        this.container.innerHTML = '';
+        if (this.container) {
+            this.container.innerHTML = '';
+        }
     }
 }
 

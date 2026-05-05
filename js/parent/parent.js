@@ -127,23 +127,17 @@ class ParentMode {
     }
 
     /**
-     * Get current settings
+     * Get current settings (uses centralized settings store)
      */
     getSettings() {
-        return {
-            soundEnabled: Storage.get('sound_enabled', true),
-            musicEnabled: Storage.get('music_enabled', true),
-            vibrationEnabled: Storage.get('vibration_enabled', true)
-        };
+        return Storage.getSettings();
     }
 
     /**
-     * Update settings
+     * Update settings (uses centralized settings store)
      */
     updateSettings(settings) {
-        Object.entries(settings).forEach(([key, value]) => {
-            Storage.set(key, value);
-        });
+        Storage.saveSettings(settings);
     }
 
     /**
