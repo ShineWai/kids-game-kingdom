@@ -970,3 +970,11 @@ class BearJourney extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = BearJourney;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.BearJourney = BearJourney;
+    if (window.GameRegistry) {
+        GameRegistry.register('bear-journey', BearJourney);
+    }
+}

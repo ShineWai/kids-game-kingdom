@@ -674,3 +674,11 @@ class MusicBand extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MusicBand;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.MusicBand = MusicBand;
+    if (window.GameRegistry) {
+        GameRegistry.register('music-band', MusicBand);
+    }
+}

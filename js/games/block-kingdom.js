@@ -652,3 +652,11 @@ class BlockKingdom extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = BlockKingdom;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.BlockKingdom = BlockKingdom;
+    if (window.GameRegistry) {
+        GameRegistry.register('block-kingdom', BlockKingdom);
+    }
+}

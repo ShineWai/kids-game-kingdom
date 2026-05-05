@@ -804,3 +804,11 @@ class RainbowBridge extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = RainbowBridge;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.RainbowBridge = RainbowBridge;
+    if (window.GameRegistry) {
+        GameRegistry.register('rainbow-bridge', RainbowBridge);
+    }
+}

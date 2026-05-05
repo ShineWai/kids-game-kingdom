@@ -600,3 +600,11 @@ class BubblePop extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = BubblePop;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.BubblePop = BubblePop;
+    if (window.GameRegistry) {
+        GameRegistry.register('bubble-pop', BubblePop);
+    }
+}

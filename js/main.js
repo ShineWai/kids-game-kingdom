@@ -198,21 +198,28 @@ class App {
      * Launch a game
      */
     launchGame(gameId) {
-        this.showLoading();
+        // Try to find game class from registry or window
+        let GameClass = null;
 
-        // Dynamically load game
-        const gamePath = `js/games/${gameId}.js`;
+        // First check registry
+        if (GameRegistry && GameRegistry.has(gameId)) {
+            GameClass = GameRegistry.get(gameId);
+        }
 
-        import(gamePath)
-            .then(module => {
-                this.hideLoading();
-                this.startGame(module.default || module);
-            })
-            .catch(error => {
-                console.error('[App] Failed to load game:', error);
-                this.hideLoading();
-                this.showError('遊戲載入失敗，請稍後再試');
-            });
+        // Then check window with PascalCase conversion
+        if (!GameClass) {
+            const pascalCase = gameId.split('-').map(s =>
+                s.charAt(0).toUpperCase() + s.slice(1)
+            ).join('');
+            GameClass = window[pascalCase] || window[gameId];
+        }
+
+        if (GameClass) {
+            this.startGame(GameClass);
+        } else {
+            console.error('[App] Game not found:', gameId);
+            this.showError('遊戲不存在');
+        }
     }
 
     /**

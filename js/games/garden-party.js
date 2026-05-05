@@ -966,3 +966,11 @@ class GardenParty extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = GardenParty;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.GardenParty = GardenParty;
+    if (window.GameRegistry) {
+        GameRegistry.register('garden-party', GardenParty);
+    }
+}

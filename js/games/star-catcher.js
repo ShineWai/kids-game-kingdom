@@ -1225,3 +1225,11 @@ class StarCatcher extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = StarCatcher;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.StarCatcher = StarCatcher;
+    if (window.GameRegistry) {
+        GameRegistry.register('star-catcher', StarCatcher);
+    }
+}

@@ -1159,3 +1159,11 @@ class LittleAstronaut extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = LittleAstronaut;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.LittleAstronaut = LittleAstronaut;
+    if (window.GameRegistry) {
+        GameRegistry.register('astronaut', LittleAstronaut);
+    }
+}

@@ -516,3 +516,11 @@ class ShapeSlicer extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ShapeSlicer;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.ShapeSlicer = ShapeSlicer;
+    if (window.GameRegistry) {
+        GameRegistry.register('shape-slicer', ShapeSlicer);
+    }
+}

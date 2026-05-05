@@ -959,3 +959,11 @@ class MagicPainter extends GameBase {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MagicPainter;
 }
+
+// Register globally for browser use
+if (typeof window !== 'undefined') {
+    window.MagicPainter = MagicPainter;
+    if (window.GameRegistry) {
+        GameRegistry.register('magic-painter', MagicPainter);
+    }
+}
