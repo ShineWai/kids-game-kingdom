@@ -294,14 +294,14 @@ body {
     -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 130px;
+    min-height: 150px;
     position: relative;
 }
 
@@ -354,6 +354,47 @@ body {
     font-size: var(--font-xs);
     color: var(--text-secondary);
     text-align: center;
+}
+
+/* Game Card Stars (small) */
+.game-card-stars {
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+/* Game Card Progress Bar */
+.game-card-progress {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.game-card-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+/* Game Card Level */
+.game-card-level {
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Game Card Learn Tag */
+.game-card-learn {
+    font-size: 10px;
+    color: var(--color-accent);
+    background: rgba(124, 255, 110, 0.06);
+    padding: 2px 8px;
+    border-radius: 8px;
+    margin-top: 2px;
 }
 
 /* Header */

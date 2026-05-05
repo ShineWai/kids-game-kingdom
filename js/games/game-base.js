@@ -45,6 +45,8 @@ class GameBase {
         this.onStarEarned = this.options.onStarEarned || null;
         this.onPause = this.options.onPause || null;
         this.onResume = this.options.onResume || null;
+        this.onBack = this.options.onBack || null;
+        this.onNextLevel = this.options.onNextLevel || null;
 
         // Load saved progress
         this.loadProgress();
@@ -54,10 +56,28 @@ class GameBase {
      * Initialize the game
      */
     init(container) {
+        this.container = container;
+
+        // Back button
+        this._backBtn = document.createElement('button');
+        this._backBtn.className = 'game-back-btn';
+        this._backBtn.innerHTML = '🏠';
+        this._backBtn.title = '回首頁';
+        this._backBtn.addEventListener('click', () => { if (this.onBack) this.onBack(); });
+        this._backBtn.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); if (this.onBack) this.onBack(); });
+        container.appendChild(this._backBtn);
+
+        // Level badge
+        this._levelBadge = document.createElement('div');
+        this._levelBadge.className = 'game-level-badge';
+        this._levelBadge.textContent = '第 ' + this.level + ' 關';
+        container.appendChild(this._levelBadge);
+
         // Create canvas
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
+        this.canvas.className = 'game-canvas';
         container.appendChild(this.canvas);
 
         // Create renderer
@@ -243,10 +263,12 @@ class GameBase {
      * Save progress
      */
     saveProgress() {
+        const current = Storage.getProgress(this.gameId);
         Storage.saveProgress(this.gameId, {
             score: this.score,
-            stars: this.stars,
-            highScore: this.highScore,
+            stars: Math.max(current.stars || 0, this.stars),
+            highScore: Math.max(current.highScore || 0, this.highScore),
+            level: Math.max(current.level || 1, (this.stars > 0) ? this.level + 1 : this.level),
             completed: this.stars > 0
         });
     }
@@ -278,6 +300,12 @@ class GameBase {
 
         if (this.canvas && this.canvas.parentNode) {
             this.canvas.parentNode.removeChild(this.canvas);
+        }
+        if (this._backBtn && this._backBtn.parentNode) {
+            this._backBtn.parentNode.removeChild(this._backBtn);
+        }
+        if (this._levelBadge && this._levelBadge.parentNode) {
+            this._levelBadge.parentNode.removeChild(this._levelBadge);
         }
 
         this.state = 'idle';

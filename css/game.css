@@ -13,6 +13,68 @@
     position: relative;
 }
 
+/* Game Back Button */
+.game-back-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(10, 14, 39, 0.75);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: all 0.2s;
+    padding: 0;
+}
+.game-back-btn:active {
+    background: rgba(255,255,255,0.15);
+    transform: scale(0.92);
+}
+
+/* Game Level Badge */
+.game-level-badge {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 300;
+    pointer-events: none;
+    box-shadow: 0 0 12px var(--color-primary-glow);
+}
+
+/* Overlay Level */
+.overlay-level {
+    font-size: var(--font-md);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Learn Message */
+.learn-message {
+    font-size: var(--font-sm);
+    color: var(--color-accent);
+    margin-top: 8px;
+    padding: 8px 16px;
+    background: rgba(124, 255, 110, 0.08);
+    border-radius: 12px;
+    border: 1px solid rgba(124, 255, 110, 0.15);
+}
+
 .game-canvas-wrapper {
     position: relative;
     overflow: hidden;

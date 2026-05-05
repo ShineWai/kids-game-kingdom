@@ -103,7 +103,7 @@ class StorageManager {
      */
     getProgress(gameId) {
         const progress = this.get('progress', {});
-        return progress[gameId] || { stars: 0, highScore: 0, completed: false };
+        return progress[gameId] || { stars: 0, highScore: 0, level: 1, completed: false };
     }
 
     /**
