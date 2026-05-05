@@ -161,16 +161,23 @@ class App {
      */
     renderGameCards() {
         const games = [
-            { id: 'flappyBird', name: '小小飛飛', icon: '🐦', description: '控制小鳥飛翔！' },
-            { id: 'catchGame', name: '接水果', icon: '🍎', description: '接住掉下的水果！' },
-            { id: 'puzzle', name: '形狀拼拼', icon: '🧩', description: '拼出形狀！' },
-            { id: 'memory', name: '記憶翻翻', icon: '🃏', description: '翻出相同卡片！' }
+            { id: 'bubble-pop', name: '泡泡大作戰', icon: '🫧', description: '戳破彩色泡泡！' },
+            { id: 'star-catcher', name: '星星小精靈', icon: '⭐', description: '收集掉落的星星！' },
+            { id: 'shape-slicer', name: '形狀拼接師', icon: '🧩', description: '拼出完整形狀！' },
+            { id: 'block-kingdom', name: '積木王國', icon: '🧱', description: '堆高高積木城堡！' },
+            { id: 'magic-painter', name: '魔法畫筆', icon: '🎨', description: '畫出美麗圖畫！' },
+            { id: 'music-band', name: '歡樂小樂隊', icon: '🥁', description: '跟著節奏敲樂器！' },
+            { id: 'rainbow-bridge', name: '彩虹橋梁', icon: '🌈', description: '搭建過河橋梁！' },
+            { id: 'bear-journey', name: '小熊找媽媽', icon: '🐾', description: '幫小熊找到媽媽！' },
+            { id: 'garden-party', name: '花園派對', icon: '🦋', description: '照顧花園植物！' },
+            { id: 'astronaut', name: '小小太空人', icon: '🚀', description: '跳躍在太空站之間！' }
         ];
 
         return games.map(game => `
             <div class="game-card pop" data-game="${game.id}">
                 <div class="game-card-icon">${game.icon}</div>
                 <div class="game-card-title">${game.name}</div>
+                <div class="game-card-desc">${game.description}</div>
             </div>
         `).join('');
     }
