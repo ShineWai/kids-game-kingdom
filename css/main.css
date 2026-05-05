@@ -51,6 +51,11 @@
     /* Star Colors */
     --star-gold: #FFD700;
     --star-empty: #E0E0E0;
+
+    /* Game-specific Colors */
+    --color-sky: #87CEEB;
+    --color-sky-light: #E0F7FA;
+    --color-orange: #FFA726;
 }
 
 /* Reset & Base Styles */

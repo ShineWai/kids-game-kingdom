@@ -80,14 +80,6 @@
     }
 }
 
-.fadeIn {
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-.fadeIn-up {
-    animation: fadeInUp 0.5s ease-out forwards;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -97,6 +89,14 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fadeIn-up {
+    animation: fadeInUp 0.5s ease-out forwards;
 }
 
 .fadeIn-down {

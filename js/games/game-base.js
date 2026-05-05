@@ -54,8 +54,6 @@ class GameBase {
 
         // Start game loop
         this.startGameLoop();
-
-        console.log(`[Game] ${this.gameId} initialized`);
     }
 
     /**
@@ -118,7 +116,6 @@ class GameBase {
         this.lastFrameTime = performance.now();
 
         this.onStart?.();
-        console.log(`[Game] ${this.gameId} started`);
     }
 
     /**
@@ -132,7 +129,6 @@ class GameBase {
         this.pauseTime = Date.now();
 
         if (this.onPause) this.onPause();
-        console.log(`[Game] ${this.gameId} paused`);
     }
 
     /**
@@ -150,7 +146,6 @@ class GameBase {
         this.lastFrameTime = performance.now();
 
         if (this.onResume) this.onResume();
-        console.log(`[Game] ${this.gameId} resumed`);
     }
 
     /**
@@ -167,7 +162,6 @@ class GameBase {
         this.saveProgress();
 
         if (this.onGameOver) this.onGameOver(this.getResult());
-        console.log(`[Game] ${this.gameId} ended with score: ${this.score}`);
     }
 
     /**
@@ -257,7 +251,6 @@ class GameBase {
         }
 
         this.state = 'idle';
-        console.log(`[Game] ${this.gameId} destroyed`);
     }
 
     /**

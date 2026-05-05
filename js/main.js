@@ -28,8 +28,6 @@ class App {
 
         // Render home view
         this.renderHome();
-
-        console.log('[App] Initialized');
     }
 
     /**
@@ -71,10 +69,10 @@ class App {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
-                    console.log('[SW] Registered:', registration.scope);
+                    // SW registered
                 })
                 .catch(error => {
-                    console.log('[SW] Registration failed:', error);
+                    // SW registration failed
                 });
         }
     }
@@ -401,7 +399,4 @@ class App {
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
     app.init();
-
-    // Expose for debugging
-    window.App = app;
 });
