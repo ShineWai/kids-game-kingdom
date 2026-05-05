@@ -202,7 +202,7 @@ class App {
         let GameClass = null;
 
         // First check registry
-        if (GameRegistry && GameRegistry.has(gameId)) {
+        if (typeof GameRegistry !== 'undefined' && GameRegistry.has(gameId)) {
             GameClass = GameRegistry.get(gameId);
         }
 
