@@ -1,0 +1,382 @@
+/**
+ * Animations CSS - Float, pop, shake, fadeIn animations
+ */
+
+/* Float Animation */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.float {
+    animation: float 2s ease-in-out infinite;
+}
+
+.float-slow {
+    animation: float 3s ease-in-out infinite;
+}
+
+.float-fast {
+    animation: float 1s ease-in-out infinite;
+}
+
+/* Pop Animation */
+@keyframes pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.pop {
+    animation: pop 0.4s ease-out forwards;
+}
+
+.pop-delay-1 { animation-delay: 0.1s; }
+.pop-delay-2 { animation-delay: 0.2s; }
+.pop-delay-3 { animation-delay: 0.3s; }
+.pop-delay-4 { animation-delay: 0.4s; }
+.pop-delay-5 { animation-delay: 0.5s; }
+
+/* Shake Animation */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.shake-small {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fadeIn-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeIn-down {
+    animation: fadeInDown 0.5s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fadeIn-left {
+    animation: fadeInLeft 0.5s ease-out forwards;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.fadeIn-right {
+    animation: fadeInRight 0.5s ease-out forwards;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.bounce {
+    animation: bounce 0.6s ease-in-out infinite;
+}
+
+/* Spin Animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+.spin-slow {
+    animation: spin 2s linear infinite;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+.pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Wiggle Animation */
+@keyframes wiggle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+}
+
+.wiggle {
+    animation: wiggle 0.5s ease-in-out infinite;
+}
+
+/* Scale In Animation */
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scaleIn {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Slide In Animations */
+.slideIn-up {
+    animation: slideInUp 0.4s ease-out forwards;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slideIn-down {
+    animation: slideInDown 0.4s ease-out forwards;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Confetti Animation */
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: confettiFall 3s ease-out forwards;
+}
+
+/* Success Animation */
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(102, 187, 106, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(102, 187, 106, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(102, 187, 106, 0);
+    }
+}
+
+.successPulse {
+    animation: successPulse 0.6s ease-out;
+}
+
+/* Error Animation */
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 60% {
+        transform: translateX(-10px);
+    }
+    30%, 90% {
+        transform: translateX(10px);
+    }
+}
+
+.errorShake {
+    animation: errorShake 0.5s ease-out;
+}
+
+/* Star Earned Animation */
+@keyframes starEarned {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.5) rotate(20deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.starEarned {
+    animation: starEarned 0.6s ease-out forwards;
+}
+
+/* Running Animation for characters */
+@keyframes running {
+    0%, 100% {
+        transform: translateY(0) scaleX(1);
+    }
+    25% {
+        transform: translateY(-5px) scaleX(1);
+    }
+    50% {
+        transform: translateY(0) scaleX(1);
+    }
+    75% {
+        transform: translateY(-5px) scaleX(1);
+    }
+}
+
+.running {
+    animation: running 0.3s ease-in-out infinite;
+}
+
+/* Jumping Animation */
+@keyframes jump {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.jump {
+    animation: jump 0.4s ease-in-out;
+}
+
+/* Disabled state animation */
+@keyframes disabledPulse {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.disabled {
+    animation: disabledPulse 1s ease-in-out infinite;
+    pointer-events: none;
+}

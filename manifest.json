@@ -1,0 +1,13 @@
+{
+    "name": "小小遊戲王國",
+    "short_name": "遊戲王國",
+    "description": "幼兒HTML5遊戲平台",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#4FC3F7",
+    "theme_color": "#4FC3F7",
+    "orientation": "any",
+    "icons": [
+        {"src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%234FC3F7' width='512' height='512' rx='64'/><text x='256' y='320' font-size='200' text-anchor='middle'>🎮</text></svg>", "sizes": "512x512", "type": "image/svg+xml"}
+    ]
+}

@@ -1,0 +1,265 @@
+/**
+ * Game CSS - Game container, Canvas, HUD, controls
+ */
+
+/* Game Container */
+.game-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 100%);
+}
+
+.game-canvas-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+/* HUD (Heads-Up Display) */
+.game-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.hud-icon {
+    font-size: var(--font-lg);
+}
+
+.hud-value {
+    font-size: var(--font-md);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.hud-score .hud-value {
+    color: var(--color-primary-dark);
+}
+
+.hud-time .hud-value {
+    color: var(--color-secondary);
+}
+
+/* Level Indicator */
+.level-indicator {
+    position: absolute;
+    top: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--color-secondary), #FFA726);
+    color: var(--text-light);
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-sm);
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+}
+
+/* Touch Controls */
+.touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    display: flex;
+    pointer-events: none;
+}
+
+.touch-control {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.touch-control-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-round);
+    background: rgba(255, 255, 255, 0.8);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.1s ease, background 0.1s ease;
+}
+
+.touch-control-btn:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 1);
+}
+
+.touch-control-left .touch-control-btn {
+    margin-left: var(--spacing-lg);
+}
+
+.touch-control-right .touch-control-btn {
+    margin-right: var(--spacing-lg);
+}
+
+/* Game Overlay (Pause, Game Over, etc.) */
+.game-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.game-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-title {
+    font-size: var(--font-xxl);
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.overlay-subtitle {
+    font-size: var(--font-lg);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: var(--spacing-lg);
+}
+
+.overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Pause Button */
+.pause-btn {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-round);
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: var(--text-light);
+    font-size: var(--font-lg);
+    cursor: pointer;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.pause-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Result Panel */
+.result-panel {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    max-width: 300px;
+    width: 90%;
+}
+
+.result-stars {
+    font-size: 48px;
+    margin-bottom: var(--spacing-md);
+}
+
+.result-score {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.result-message {
+    font-size: var(--font-md);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Progress Indicator */
+.game-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.game-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-success), var(--color-accent));
+    transition: width 0.3s ease;
+}
+
+/* Combo Display */
+.combo-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--font-xxl);
+    font-weight: 900;
+    color: var(--color-secondary);
+    text-shadow: 2px 2px 0 var(--color-primary-dark);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 150;
+}
+
+.combo-display.active {
+    opacity: 1;
+    animation: comboPulse 0.5s ease;
+}
+
+@keyframes comboPulse {
+    0% { transform: translate(-50%, -50%) scale(0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
